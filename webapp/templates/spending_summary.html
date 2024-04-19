@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Spending Summary</title>
+    <title>Total Spending Summary</title>
 </head>
 <body>
-    <h1>Spending Summary</h1>
-    <div>Weekly Spending: ${{ weekly }}</div>
-    <div>Monthly Spending: ${{ monthly }}</div>
-    <div>Yearly Spending: ${{ yearly }}</div>
-    <div>Total Spending: ${{ total }}</div>
+    <h1>Total Spending Summary</h1>
+    <h2>Weekly Spending</h2>
+    <ul>
+        {% for week in weekly_spending %}
+        <li>Week {{ week._id.week }}, {{ week._id.year }}: ${{ week.total }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Monthly Spending</h2>
+    <ul>
+        {% for month in monthly_spending %}
+        <li>{{ month._id.month }}/{{ month._id.year }}: ${{ month.total }}</li>
+        {% endfor %}
+    </ul>
+    <h2>Yearly Spending</h2>
+    <ul>
+        {% for year in yearly_spending %}
+        <li>{{ year._id.year }}: ${{ year.total }}</li>
+        {% endfor %}
+    </ul>
     <a href="{{ url_for('home') }}">Back to Dashboard</a>
 </body>
 </html>

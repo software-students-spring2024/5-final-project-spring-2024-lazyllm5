@@ -13,14 +13,14 @@
 <body>
     <div id="welcome">Welcome, {{ current_user.username }}</div>
     <h1>Dashboard</h1>
-    <a href="{{ url_for('detailed_spending_summary') }}">Total Spending Summary</a> |
-    <a href="{{ url_for('spending_summary') }}">Current Spending Summary</a> |
+    <a href="{{ url_for('detailed_spending_summary') }}">Current Spending Summary</a> |
+    <a href="{{ url_for('spending_summary') }}">Total Spending Summary</a> |
     <a href="{{ url_for('add_transaction') }}">Add Transaction</a> |
     <a href="{{ url_for('logout') }}">Logout</a>
     <ul>
         {% for transaction in transactions %}
         <li>
-            {{ transaction.date }} - {{ transaction.category }} - ${{ transaction.amount }}
+            {{ transaction.date }} - {{ transaction.item_name }} - {{ transaction.category }} - ${{ transaction.amount }}
             <a href="{{ url_for('edit_transaction', transaction_id=transaction['_id']) }}">Edit</a> |
             <a href="{{ url_for('delete_transaction', transaction_id=transaction['_id']) }}">Delete</a>
         </li>
@@ -28,47 +28,3 @@
     </ul>
 </body>
 </html>
-
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-    <style>
-        #welcome {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div id="welcome">Welcome, {{ current_user.username }}</div>
-    <h1>Dashboard</h1>
-    <a href="{{ url_for('add_transaction') }}">Add Transaction</a> |
-    <a href="{{ url_for('logout') }}">Logout</a>
-    <ul>
-        {% for transaction in transactions %}
-            <li>{{ transaction.date }} - {{ transaction.category }} - ${{ transaction.amount }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html> -->
-
-
-<!-- <!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard</title>
-</head>
-<body>
-    <h1>Dashboard</h1>
-    <a href="{{ url_for('add_transaction') }}">Add Transaction</a> |
-    <a href="{{ url_for('logout') }}">Logout</a>
-    <ul>
-        {% for transaction in transactions %}
-            <li>{{ transaction.date }} - {{ transaction.category }} - ${{ transaction.amount }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html> -->
