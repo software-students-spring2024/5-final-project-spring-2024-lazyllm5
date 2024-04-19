@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 from bson.objectid import ObjectId
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
 import os
 
 # Load environment variables
@@ -118,6 +119,125 @@ def delete_transaction(transaction_id):
     transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': current_user.id})
     flash('Transaction deleted successfully.')
     return redirect(url_for('home'))
+
+@app.route('/detailed-spending-summary')
+@login_required
+def detailed_spending_summary():
+    # Define the pipeline for weekly aggregation
+    weekly_pipeline = [
+        {'$match': {'user_id': current_user.id}},
+        {'$group': {
+            '_id': {
+                'year': {'$year': {'$toDate': '$date'}},
+                'week': {'$week': {'$toDate': '$date'}}
+            },
+            'total': {'$sum': '$amount'}
+        }},
+        {'$sort': {'_id.year': -1, '_id.week': -1}}
+    ]
+
+    # Define the pipeline for monthly aggregation
+    monthly_pipeline = [
+        {'$match': {'user_id': current_user.id}},
+        {'$group': {
+            '_id': {
+                'year': {'$year': {'$toDate': '$date'}},
+                'month': {'$month': {'$toDate': '$date'}}
+            },
+            'total': {'$sum': '$amount'}
+        }},
+        {'$sort': {'_id.year': -1, '_id.month': -1}}
+    ]
+
+    # Define the pipeline for yearly aggregation
+    yearly_pipeline = [
+        {'$match': {'user_id': current_user.id}},
+        {'$group': {
+            '_id': {
+                'year': {'$year': {'$toDate': '$date'}}
+            },
+            'total': {'$sum': '$amount'}
+        }},
+        {'$sort': {'_id.year': -1}}
+    ]
+
+    # Execute the aggregation queries
+    db = client['BudgetTracker']  # assuming 'client' and 'db' are defined and connected elsewhere in your code
+    weekly_spending = list(db.transactions.aggregate(weekly_pipeline))
+    monthly_spending = list(db.transactions.aggregate(monthly_pipeline))
+    yearly_spending = list(db.transactions.aggregate(yearly_pipeline))
+
+    return render_template('detailed_spending_summary.html',
+                           weekly_spending=weekly_spending,
+                           monthly_spending=monthly_spending,
+                           yearly_spending=yearly_spending)
+
+@app.route('/spending-summary')
+@login_required
+def spending_summary():
+    now = datetime.now()
+    start_of_week = now - timedelta(days=now.weekday())
+    start_of_month = datetime(now.year, now.month, 1)
+    start_of_year = datetime(now.year, 1, 1)
+
+    weekly_spending = transactions.aggregate([
+        {'$match': {
+            'user_id': current_user.id,
+            'date': {'$gte': start_of_week.strftime('%Y-%m-%d')}
+        }},
+        {'$group': {
+            '_id': None,
+            'total': {'$sum': '$amount'}
+        }}
+    ])
+
+    monthly_spending = transactions.aggregate([
+        {'$match': {
+            'user_id': current_user.id,
+            'date': {'$gte': start_of_month.strftime('%Y-%m-%d')}
+        }},
+        {'$group': {
+            '_id': None,
+            'total': {'$sum': '$amount'}
+        }}
+    ])
+
+    yearly_spending = transactions.aggregate([
+        {'$match': {
+            'user_id': current_user.id,
+            'date': {'$gte': start_of_year.strftime('%Y-%m-%d')}
+        }},
+        {'$group': {
+            '_id': None,
+            'total': {'$sum': '$amount'}
+        }}
+    ])
+
+    total_spending = transactions.aggregate([
+        {'$match': {
+            'user_id': current_user.id
+        }},
+        {'$group': {
+            '_id': None,
+            'total': {'$sum': '$amount'}
+        }}
+    ])
+
+    weekly_total = 0
+    monthly_total = 0
+    yearly_total = 0
+    total = 0
+
+    # Safely extract totals
+    try:
+        weekly_total = next(weekly_spending, {}).get('total', 0)
+        monthly_total = next(monthly_spending, {}).get('total', 0)
+        yearly_total = next(yearly_spending, {}).get('total', 0)
+        total = next(total_spending, {}).get('total', 0)
+    except StopIteration:
+        pass  # Optionally handle no data case here
+
+    return render_template('spending_summary.html', weekly=weekly_total, monthly=monthly_total, yearly=yearly_total, total=total)
 
 
 if __name__ == '__main__':

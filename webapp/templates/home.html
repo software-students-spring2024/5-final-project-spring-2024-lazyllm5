@@ -13,6 +13,8 @@
 <body>
     <div id="welcome">Welcome, {{ current_user.username }}</div>
     <h1>Dashboard</h1>
+    <a href="{{ url_for('detailed_spending_summary') }}">Total Spending Summary</a> |
+    <a href="{{ url_for('spending_summary') }}">Current Spending Summary</a> |
     <a href="{{ url_for('add_transaction') }}">Add Transaction</a> |
     <a href="{{ url_for('logout') }}">Logout</a>
     <ul>
