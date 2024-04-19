@@ -87,10 +87,12 @@ def logout():
 @login_required
 def add_transaction():
     if request.method == 'POST':
+        item_name = request.form['item_name']
         amount = float(request.form['amount'])
         category = request.form['category']
         date = request.form['date']
         transactions.insert_one({
+            'item_name': item_name,
             'amount': amount,
             'category': category,
             'date': date,
@@ -99,19 +101,30 @@ def add_transaction():
         return redirect(url_for('home'))
     return render_template('add_transaction.html')
 
+
 @app.route('/edit-transaction/<transaction_id>', methods=['GET', 'POST'])
 @login_required
 def edit_transaction(transaction_id):
     transaction = transactions.find_one({'_id': ObjectId(transaction_id), 'user_id': current_user.id})
     if request.method == 'POST':
+        item_name = request.form.get('item_name')  # Capture the item name from the form
+        amount = float(request.form.get('amount'))
+        category = request.form.get('category')
+        date = request.form.get('date')
+
+        # Update the transaction document with new values
         updated_transaction = {
-            'amount': float(request.form['amount']),
-            'category': request.form['category'],
-            'date': request.form['date']
+            'item_name': item_name,
+            'amount': amount,
+            'category': category,
+            'date': date
         }
         transactions.update_one({'_id': ObjectId(transaction_id)}, {'$set': updated_transaction})
+        flash('Transaction updated successfully.')
         return redirect(url_for('home'))
+
     return render_template('edit_transaction.html', transaction=transaction)
+
 
 @app.route('/delete-transaction/<transaction_id>', methods=['POST'])
 @login_required
@@ -123,7 +136,36 @@ def delete_transaction(transaction_id):
 @app.route('/detailed-spending-summary')
 @login_required
 def detailed_spending_summary():
-    # Define the pipeline for weekly aggregation
+    year = request.args.get('year', datetime.now().year, type=int)
+    month = request.args.get('month', type=int)  # Optional month selection
+
+    # Define the start and end of the period based on user selection
+    if month:
+        start_date = datetime(year, month, 1)
+        end_date = datetime(year, month+1, 1) if month < 12 else datetime(year+1, 1, 1)
+    else:
+        start_date = datetime(year, 1, 1)
+        end_date = datetime(year+1, 1, 1)
+
+    # Adjust the aggregation to limit by the selected period
+    summary = list(transactions.aggregate([
+        {'$match': {
+            'user_id': current_user.id,
+            'date': {'$gte': start_date.strftime('%Y-%m-%d'), '$lt': end_date.strftime('%Y-%m-%d')}
+        }},
+        {'$group': {'_id': '$category', 'total': {'$sum': '$amount'}}},
+        {'$sort': {'total': -1}}
+    ]))
+
+    total = sum(item['total'] for item in summary)  # Calculate the total spent in the selected period
+
+    return render_template('detailed_spending_summary.html', summary=summary, total=total, now=datetime.now())
+
+
+@app.route('/spending-summary')
+@login_required
+def spending_summary():
+        # Define the pipeline for weekly aggregation
     weekly_pipeline = [
         {'$match': {'user_id': current_user.id}},
         {'$group': {
@@ -162,83 +204,15 @@ def detailed_spending_summary():
     ]
 
     # Execute the aggregation queries
-    db = client['BudgetTracker']  # assuming 'client' and 'db' are defined and connected elsewhere in your code
+    db = client['BudgetTracker']
     weekly_spending = list(db.transactions.aggregate(weekly_pipeline))
     monthly_spending = list(db.transactions.aggregate(monthly_pipeline))
     yearly_spending = list(db.transactions.aggregate(yearly_pipeline))
 
-    return render_template('detailed_spending_summary.html',
+    return render_template('spending_summary.html',
                            weekly_spending=weekly_spending,
                            monthly_spending=monthly_spending,
                            yearly_spending=yearly_spending)
-
-@app.route('/spending-summary')
-@login_required
-def spending_summary():
-    now = datetime.now()
-    start_of_week = now - timedelta(days=now.weekday())
-    start_of_month = datetime(now.year, now.month, 1)
-    start_of_year = datetime(now.year, 1, 1)
-
-    weekly_spending = transactions.aggregate([
-        {'$match': {
-            'user_id': current_user.id,
-            'date': {'$gte': start_of_week.strftime('%Y-%m-%d')}
-        }},
-        {'$group': {
-            '_id': None,
-            'total': {'$sum': '$amount'}
-        }}
-    ])
-
-    monthly_spending = transactions.aggregate([
-        {'$match': {
-            'user_id': current_user.id,
-            'date': {'$gte': start_of_month.strftime('%Y-%m-%d')}
-        }},
-        {'$group': {
-            '_id': None,
-            'total': {'$sum': '$amount'}
-        }}
-    ])
-
-    yearly_spending = transactions.aggregate([
-        {'$match': {
-            'user_id': current_user.id,
-            'date': {'$gte': start_of_year.strftime('%Y-%m-%d')}
-        }},
-        {'$group': {
-            '_id': None,
-            'total': {'$sum': '$amount'}
-        }}
-    ])
-
-    total_spending = transactions.aggregate([
-        {'$match': {
-            'user_id': current_user.id
-        }},
-        {'$group': {
-            '_id': None,
-            'total': {'$sum': '$amount'}
-        }}
-    ])
-
-    weekly_total = 0
-    monthly_total = 0
-    yearly_total = 0
-    total = 0
-
-    # Safely extract totals
-    try:
-        weekly_total = next(weekly_spending, {}).get('total', 0)
-        monthly_total = next(monthly_spending, {}).get('total', 0)
-        yearly_total = next(yearly_spending, {}).get('total', 0)
-        total = next(total_spending, {}).get('total', 0)
-    except StopIteration:
-        pass  # Optionally handle no data case here
-
-    return render_template('spending_summary.html', weekly=weekly_total, monthly=monthly_total, yearly=yearly_total, total=total)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

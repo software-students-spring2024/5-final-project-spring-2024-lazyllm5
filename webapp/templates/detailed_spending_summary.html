@@ -1,28 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detailed Spending Summary</title>
+    <title>Current Spending Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Detailed Spending Summary</h1>
-    <h2>Weekly Spending</h2>
+
+    <!-- Selection form for year and month -->
+    <form action="{{ url_for('detailed_spending_summary') }}" method="get">
+        Year: <input type="number" name="year" value="{{ now.year }}" min="2000" max="{{ now.year }}">
+        Month: <input type="number" name="month" min="1" max="12" placeholder="Month (optional)">
+        <button type="submit">Show</button>
+    </form>
+
+    <h2>Selected Period Spending</h2>
     <ul>
-        {% for week in weekly_spending %}
-        <li>Week {{ week._id.week }}, {{ week._id.year }}: ${{ week.total }}</li>
+        {% for item in summary %}
+        <li>{{ item._id }}: ${{ item.total | round(2) }} ({{ (item.total / total * 100) | round(2) }}%)</li>
         {% endfor %}
+        <li><strong>Total:</strong> ${{ total | round(2) }}</li>
     </ul>
-    <h2>Monthly Spending</h2>
-    <ul>
-        {% for month in monthly_spending %}
-        <li>{{ month._id.month }}/{{ month._id.year }}: ${{ month.total }}</li>
-        {% endfor %}
-    </ul>
-    <h2>Yearly Spending</h2>
-    <ul>
-        {% for year in yearly_spending %}
-        <li>{{ year._id.year }}: ${{ year.total }}</li>
-        {% endfor %}
-    </ul>
+
     <a href="{{ url_for('home') }}">Back to Dashboard</a>
 </body>
 </html>
