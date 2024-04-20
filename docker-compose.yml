@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  webapp:
+    build: ./webapp
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - MONGO_URI=mongodb://admin:123456@mongodb:27017/mydatabase
+    depends_on:
+      - mongodb
+    networks:
+      - webnet
+
+  mongodb:
+    build: ./mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+      - MONGO_INITDB_DATABASE=mydatabase
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - webnet
+
+networks:
+  webnet:
+
+volumes:
+  mongodb_data:
