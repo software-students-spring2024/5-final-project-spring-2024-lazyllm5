@@ -2,7 +2,7 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning, module='mongomock.__version__')
 import pytest
 from flask_login import login_user, current_user, logout_user
-from webapp.app import app, bcrypt, users, db, User
+from webapp.app import app, bcrypt, users, db, User, load_user
 from mongomock import MongoClient
 from datetime import datetime
 from bson import ObjectId
@@ -148,3 +148,30 @@ def clean_up():
     with app.app_context():
         db.users.delete_many({})
         db.transactions.delete_many({})
+
+def test_load_user_existing(client, mocker):
+    # Mock the MongoDB call
+    mock_find_one = mocker.patch('webapp.app.users.find_one')
+    mock_find_one.return_value = {'_id': ObjectId('507f191e810c19729de860ea'), 'username': 'testuser'}
+
+    # Load user using the mocked DB return
+    from webapp.app import load_user
+    user = load_user('507f191e810c19729de860ea')
+
+    assert user is not None
+    assert user.username == 'testuser'
+
+def test_load_user_non_existing(client, mocker):
+    # Mock the MongoDB call to return None
+    mock_find_one = mocker.patch('webapp.app.users.find_one')
+    mock_find_one.return_value = None
+
+    # Use a valid ObjectId format but ensure it does not exist in your database
+    non_existing_id = '507f1f77bcf86cd799439011'
+
+    # Try to load user with non-existing ID
+    from webapp.app import load_user
+    user = load_user(non_existing_id)
+
+    assert user is None
+
