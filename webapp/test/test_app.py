@@ -174,4 +174,3 @@ def test_load_user_non_existing(client, mocker):
     user = load_user(non_existing_id)
 
     assert user is None
-

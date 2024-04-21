@@ -15,6 +15,7 @@ pytest-flask = "*"
 mongomock = "*"
 pytest-cov = "*"
 coverage = "*"
+pytest-mock = "*"
 
 [dev-packages]
 
