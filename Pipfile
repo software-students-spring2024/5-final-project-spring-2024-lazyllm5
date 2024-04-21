@@ -10,6 +10,10 @@ flask-bcrypt = "*"
 pymongo = "*"
 pip = "*"
 python-dotenv = "*"
+pytest = "*"
+pytest-flask = "*"
+mongomock = "*"
+pytest-cov = "*"
 
 [dev-packages]
 
