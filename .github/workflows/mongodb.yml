@@ -1,4 +1,4 @@
-name: MongoDB CI/CD Pipeline
+name: MongoDB CI/CD
 
 on:
   push:
@@ -28,4 +28,4 @@ jobs:
         context: ./mongodb
         file: ./mongodb/Dockerfile
         push: true
-        tags: yourusername/mongodb:latest
+        tags: wc2182/mongodb:latest
