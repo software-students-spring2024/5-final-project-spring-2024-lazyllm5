@@ -250,3 +250,14 @@ def test_login_password_hash_check(client, mocker):
     }, follow_redirects=True)
     assert response.status_code == 200
     assert '' in response.get_data(as_text=True)
+
+
+def test_detailed_spending_summary(client, logged_in_user):
+    insert_transactions_for_summary()
+    response = client.get('/detailed-spending-summary?year=2023&month=3', follow_redirects=True)
+    assert response.status_code == 200
+    print(response.get_data(as_text=True))
+    assert 'Total' in response.get_data(as_text=True)
+    assert '$0' in response.get_data(as_text=True)
+    assert 'Month' in response.get_data(as_text=True)
+    assert 'Selected Period Spending' in response.get_data(as_text=True)
