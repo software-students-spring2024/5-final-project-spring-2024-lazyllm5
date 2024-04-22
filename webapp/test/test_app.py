@@ -174,3 +174,21 @@ def test_load_user_non_existing(client, mocker):
     user = load_user(non_existing_id)
 
     assert user is None
+
+def insert_transactions_for_summary():
+    transactions = [
+        {'user_id': str(current_user.id), 'date': datetime(2023, 1, 1), 'amount': 200.00, 'category': 'Food'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 1, 7), 'amount': 150.00, 'category': 'Utilities'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 2, 1), 'amount': 300.00, 'category': 'Rent'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 2, 1), 'amount': 50.00, 'category': 'Utilities'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 3, 1), 'amount': 400.00, 'category': 'Misc'},
+    ]
+    db.transactions.insert_many(transactions)
+
+def test_spending_summary(client, logged_in_user):
+    insert_transactions_for_summary()
+    response = client.get('/spending-summary', follow_redirects=True)
+    assert response.status_code == 200
+    assert 'Weekly Spending' in response.get_data(as_text=True)
+    assert 'Monthly Spending' in response.get_data(as_text=True)
+    assert 'Yearly Spending' in response.get_data(as_text=True)
