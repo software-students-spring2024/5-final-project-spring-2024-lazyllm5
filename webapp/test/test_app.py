@@ -165,15 +165,21 @@ def test_load_user_non_existing(client, mocker):
     # Mock the MongoDB call to return None
     mock_find_one = mocker.patch('webapp.app.users.find_one')
     mock_find_one.return_value = None
-
     # Use a valid ObjectId format but ensure it does not exist in your database
     non_existing_id = '507f1f77bcf86cd799439011'
-
     # Try to load user with non-existing ID
     from webapp.app import load_user
     user = load_user(non_existing_id)
-
     assert user is None
+
+def test_register_existing_user(client, logged_in_user):
+    """ Test user registration with an existing username """
+    response = client.post('/register', data={
+        'username': 'testuser',  # Using the username of the logged in user
+        'password': 'testpassword'
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    assert b'' in response.data  # Checking for the appropriate flash message
 
 def insert_transactions_for_summary():
     transactions = [
