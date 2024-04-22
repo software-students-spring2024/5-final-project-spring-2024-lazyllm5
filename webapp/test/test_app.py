@@ -261,3 +261,25 @@ def test_detailed_spending_summary(client, logged_in_user):
     assert '$0' in response.get_data(as_text=True)
     assert 'Month' in response.get_data(as_text=True)
     assert 'Selected Period Spending' in response.get_data(as_text=True)
+
+
+def insert_transactions_for_summary():
+    transactions = [
+        {'user_id': str(current_user.id), 'date': datetime(2023, 1, 1), 'amount': 200.00, 'category': 'Food'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 1, 7), 'amount': 150.00, 'category': 'Utilities'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 2, 1), 'amount': 300.00, 'category': 'Rent'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 2, 1), 'amount': 50.00, 'category': 'Utilities'},
+        {'user_id': str(current_user.id), 'date': datetime(2023, 3, 1), 'amount': 400.00, 'category': 'Misc'},
+    ]
+    db.transactions.insert_many(transactions)
+
+
+def test_add_transaction_get(client, logged_in_user):
+    """ Test the GET request for the add-transaction page. """
+    insert_transactions_for_summary()
+    response = client.get('/add-transaction')
+    print(response.get_data(as_text=True))
+    assert response.status_code == 200
+    #print(response.get_data(as_text=True))
+
+    assert 'Add Transaction' in response.get_data(as_text=True)
