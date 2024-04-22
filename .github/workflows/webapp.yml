@@ -51,7 +51,7 @@ jobs:
         context: ./webapp
         file: ./webapp/Dockerfile
         push: true
-        tags: wc2182/flaskapp:latest
+        tags: wc2182/webapp:latest
 
   deploy:
     needs: build-and-push
