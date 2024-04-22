@@ -28,6 +28,9 @@ jobs:
       run: |
         pip install pipenv
         pipenv install --dev
+    - name: Install pytest
+      run: |
+        pipenv install --dev pytest
     - name: Run tests
       run: |
         pipenv run pytest webapp/test/test_app.py
