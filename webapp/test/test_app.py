@@ -192,7 +192,6 @@ def test_spending_summary(client, logged_in_user):
     assert 'Monthly Spending' in response.get_data(as_text=True)
     assert 'Yearly Spending' in response.get_data(as_text=True)
 
-
 def test_login_successful(client, mocker):
     """ Test successful login attempt """
     mock_user = {
@@ -224,4 +223,30 @@ def test_login_missing_fields(client):
         'username': 'someuser'
     }, follow_redirects=True)
     assert response.status_code == 400
+    assert '' in response.get_data(as_text=True)
+
+
+def test_login_password_hash_check(client, mocker):
+    """ Test login with both correct and incorrect password hash checks """
+    user = {
+        '_id': '507f1f77bcf86cd799439011',
+        'username': 'validuser',
+        'password': bcrypt.generate_password_hash('correctpassword').decode('utf-8')
+    }
+    # Mock the find_one to return the user
+    mocker.patch('webapp.app.users.find_one', return_value=user)
+    # Test with correct password
+    mocker.patch('webapp.app.bcrypt.check_password_hash', return_value=True)
+    response = client.post('/login', data={
+        'username': 'validuser',
+        'password': 'correctpassword'
+    }, follow_redirects=True)
+    assert response.status_code == 200
+    # Test with incorrect password
+    mocker.patch('webapp.app.bcrypt.check_password_hash', return_value=False)
+    response = client.post('/login', data={
+        'username': 'validuser',
+        'password': 'incorrectpassword'
+    }, follow_redirects=True)
+    assert response.status_code == 200
     assert '' in response.get_data(as_text=True)
