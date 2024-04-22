@@ -1,4 +1,4 @@
-name: MongoDB CI/CD
+name: MongoDB CI/CD 
 
 on:
   push:
