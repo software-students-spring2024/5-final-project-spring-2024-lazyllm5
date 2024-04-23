@@ -15,6 +15,7 @@ jobs:
         image: mongo
         ports:
           - 27017:27017
+        options: --hostname mongodb --health-cmd "mongo --eval 'db.runCommand({ping: 1})'" --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -29,9 +30,11 @@ jobs:
         cd webapp
         pipenv install --dev
     - name: Run tests
+      env:
+        MONGODB_URI: "mongodb://mongodb:27017/test_database" 
       run: |
         cd webapp
-        pipenv run pytest
+        timeout 5m pipenv run pytest
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
