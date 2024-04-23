@@ -31,7 +31,7 @@ jobs:
     - name: Run tests
       run: |
         cd webapp
-        pipenv run pytest test/test_app.py
+        pipenv run pytest
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
