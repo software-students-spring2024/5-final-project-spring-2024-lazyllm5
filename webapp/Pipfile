@@ -9,7 +9,7 @@ python-dotenv = "*"
 flask-login = "*"
 flask-bcrypt = "*"
 pymongo = "*"
-
+mongomock = "*"
 
 
 [dev-packages]
