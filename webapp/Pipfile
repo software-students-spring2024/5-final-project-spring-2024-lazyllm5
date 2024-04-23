@@ -9,10 +9,12 @@ python-dotenv = "*"
 flask-login = "*"
 flask-bcrypt = "*"
 pymongo = "*"
-pytest = "*"
+
 
 
 [dev-packages]
+pytest = "*"
+mongomock = "*"
 
 [requires]
 python_version = "3.10"
