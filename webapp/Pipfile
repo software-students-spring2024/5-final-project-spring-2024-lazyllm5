@@ -10,6 +10,8 @@ flask-login = "*"
 flask-bcrypt = "*"
 pymongo = "*"
 pytest = "*"
+
+
 [dev-packages]
 
 [requires]
