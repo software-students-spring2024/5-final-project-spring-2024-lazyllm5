@@ -15,6 +15,7 @@ jobs:
         image: mongo
         ports:
           - 27017:27017
+        
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -29,9 +30,11 @@ jobs:
         cd webapp
         pipenv install --dev
     - name: Run tests
+      env:
+        MONGODB_URI: "mongodb://admin:123456@mongodb:27017/mydatabase" 
       run: |
         cd webapp
-        pipenv run pytest test/test_app.py
+        timeout 5m pipenv run pytest
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
