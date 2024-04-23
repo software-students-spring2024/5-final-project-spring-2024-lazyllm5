@@ -13,8 +13,17 @@ jobs:
     services:
       mongodb:
         image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: 123456
+          MONGO_INITDB_DATABASE: mydatabase
         ports:
           - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand({ping: 1})' | mongo localhost:27017/mydatabase -u admin -p 123456 --authenticationDatabase admin"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         
     steps:
     - uses: actions/checkout@v2
@@ -34,7 +43,7 @@ jobs:
         MONGODB_URI: "mongodb://admin:123456@mongodb:27017/mydatabase" 
       run: |
         cd webapp
-        timeout 5m pipenv run pytest
+        pipenv run pytest
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
