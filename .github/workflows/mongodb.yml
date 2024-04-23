@@ -2,13 +2,11 @@ name: MongoDB CI/CD
 
 on:
   push:
-    branches: [ main, master ]
-    paths:
-      - 'mongodb/**'
+    branches: [ main ]
+
   pull_request:
-    branches: [ main, master ]
-    paths:
-      - 'mongodb/**'
+    branches: [ main ]
+
 
 jobs:
   build-and-push:
