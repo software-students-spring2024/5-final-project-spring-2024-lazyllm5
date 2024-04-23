@@ -22,6 +22,6 @@ EXPOSE 5000
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_ENV=development
-ENV MONGO_URI=mongodb://mongodb:27017/
+ENV MONGO_URI=mongodb://admin:123456@mongodb:27017/mydatabase
 # Run the application
 CMD ["pipenv", "run", "flask", "run"]

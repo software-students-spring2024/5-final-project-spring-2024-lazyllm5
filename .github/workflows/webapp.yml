@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  MONGO_URI: "mongodb://localhost:27017/"
+  MONGO_URI: "mongodb://admin:123456@localhost:27017/mydatabase"
 
 jobs:
   build-and-test:

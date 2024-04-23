@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_fallback_key')
 
 # MongoDB setup
-mongo_uri = os.getenv("MONGO_URI", "mongodb://mongodb:27017/")
+mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/mydatabase")
 client = MongoClient(mongo_uri, tls=True, tlsAllowInvalidCertificates=True)
 db = client['BudgetTracker']
 users = db.users
