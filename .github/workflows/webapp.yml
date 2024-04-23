@@ -34,7 +34,7 @@ jobs:
         MONGODB_URI: "mongodb://admin:123456@mongodb:27017/mydatabase" 
       run: |
         cd webapp
-        timeout 5m pipenv run pytest
+        timeout 5m pipenv run pytest -vv
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
