@@ -31,7 +31,7 @@ jobs:
         pipenv install --dev
     - name: Run tests
       env:
-        MONGODB_URI: "mongodb://mongodb:27017/test_database" 
+        MONGODB_URI: "mongodb://admin:123456@mongodb:27017/mydatabase" 
       run: |
         cd webapp
         timeout 5m pipenv run pytest
