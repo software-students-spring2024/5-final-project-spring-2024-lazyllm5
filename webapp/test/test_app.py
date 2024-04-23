@@ -50,10 +50,14 @@ def test_register_user(client):
 
 def test_login(client, logged_in_user):
     """ Test user login and redirect to home """
-    response = client.post('/login', data={
-        'username': 'testuser',
-        'password': 'testpassword'
-    }, follow_redirects=True)
+    try:
+        response = client.post('/login', data={
+            'username': 'testuser',
+            'password': 'testpassword'
+        }, follow_redirects=True)
+    except:
+        print("Error 1")
+    
     assert response.status_code == 200
     assert b'welcome' in response.data
 
