@@ -23,18 +23,13 @@ jobs:
         python-version: '3.10'
     - name: Install dependencies
       run: |
-        pip install pipenv
-        pipenv install --dev
-    - name: Install pytest
-      run: |
         cd webapp
         pip install pipenv
         pipenv install --dev
-        pipenv install --dev pytest
     - name: Run tests
       run: |
-        pipenv run pytest webapp/test/test_app.py
-
+        cd webapp
+        pipenv run pytest test/test_app.py
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
