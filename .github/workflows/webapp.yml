@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
 env:
-  MONGO_URI: "mongodb://admin:123456@localhost:27017/mydatabase"
+  MONGO_URI: "mongodb+srv://Weilin:Wl1234567890@cluster0.od4ogpa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 jobs:
   build-and-test:
