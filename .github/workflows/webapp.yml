@@ -5,7 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-
+env:
+  MONGO_URI: "mongodb+srv://Weilin:Wl1234567890@cluster0.od4ogpa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 jobs:
   build-and-test:
@@ -30,11 +31,9 @@ jobs:
         cd webapp
         pipenv install --dev
     - name: Run tests
-      env:
-        MONGODB_URI: "mongodb://admin:123456@mongodb:27017/mydatabase" 
       run: |
         cd webapp
-        timeout 5m pipenv run pytest
+        timeout 5m pipenv run python -m pytest
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
