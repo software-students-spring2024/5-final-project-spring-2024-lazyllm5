@@ -8,26 +8,41 @@
             right: 10px;
             top: 10px;
         }
+        form.delete-form, form.test-delete-form {
+            display: inline;
+        }
+        button.delete-button, button.test-delete-button {
+            background: none;
+            border: none;
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
-    <div id="welcome">Welcome, {{ current_user.username }}</div>
+    <div id="welcome">Welcome!, {{ current_user.username }}</div>
     <h1>Dashboard</h1>
     <a href="{{ url_for('detailed_spending_summary') }}">Current Spending Summary</a> |
-    <a href="{{ url_for('spending_summary') }}">Total Spending Summary</a> |
-    <a href="{{ url_for('add_transaction') }}">Add Transaction</a> |
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <a href="{{ url_for('spending_summary') }}">Total Spending Summary</a > |
+    <a href="{{ url_for('add_transaction') }}">Add Transaction</a > |
+    <a href="{{ url_for('logout') }}">Logout</a >
     <ul>
         {% for transaction in transactions %}
         <li>
             {{ transaction.date }} - {{ transaction.item_name }} - {{ transaction.category }} - ${{ transaction.amount }}
-            <a href="{{ url_for('edit_transaction', transaction_id=transaction['_id']) }}">Edit</a> |
-            <form method="POST" action="{{ url_for('delete_transaction', transaction_id=transaction['_id']) }}">
-                {{ form.hidden_tag() }}
-                <input type="submit" value="Delete">
+            <a href="{{ url_for('edit_transaction', transaction_id=transaction['_id']) }}">Edit</a > |
+            <!-- Original Delete form -->
+            <form action="{{ url_for('delete_transaction', transaction_id=transaction['_id']) }}" method="post" class="delete-form">
+                <button type="submit" class="delete-button">Delete</button>
             </form>
         </li>
         {% endfor %}
     </ul>
+    <!-- Additional Test Delete Form -->
+    <form action="/delete-transaction/test" method="post" class="test-delete-form">
+        <button type="submit" class="test-delete-button">Test Delete</button>
+    </form>
 </body>
 </html>

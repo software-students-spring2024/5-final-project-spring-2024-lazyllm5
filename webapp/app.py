@@ -129,9 +129,15 @@ def edit_transaction(transaction_id):
 @app.route('/delete-transaction/<transaction_id>', methods=['POST'])
 @login_required
 def delete_transaction(transaction_id):
+    print("Function triggered with transaction_id:", transaction_id)
     transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': current_user.id})
     flash('Transaction deleted successfully.')
+    print("Redirecting to home")
     return redirect(url_for('home'))
+@app.route('/delete-transaction/test', methods=['POST'])
+def test_delete():
+    print("Test delete triggered")
+    return "Test delete successful", 200
 
 @app.route('/detailed-spending-summary')
 @login_required
