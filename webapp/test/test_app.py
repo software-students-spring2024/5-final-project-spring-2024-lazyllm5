@@ -2,16 +2,11 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning, module='mongomock.__version__')
 import pytest
 from flask_login import login_user, current_user, logout_user
-from webapp.app import app, bcrypt
+from test.app import app, bcrypt, users, db, User, load_user
 from mongomock import MongoClient
 from datetime import datetime
 from bson import ObjectId
 
-client = MongoClient()
-# Access the database from the client
-db = client.my_database
-users = db.users
-transactions = db.transactions
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
@@ -26,11 +21,11 @@ def client():
 def logged_in_user(client):
     with app.test_request_context():
         with app.app_context():
-            db.users.delete_many({'username': 'testuser'})
+            users.delete_many({'username': 'testuser'})
             hashed_password = bcrypt.generate_password_hash('testpassword').decode('utf-8')
             test_user_id = ObjectId()
             test_user = {'_id': test_user_id, 'username': 'testuser', 'password': hashed_password}
-            db.users.insert_one(test_user)
+            users.insert_one(test_user)
             user = User(str(test_user['_id']), test_user['username'])
             login_user(user)
             assert current_user.is_authenticated
