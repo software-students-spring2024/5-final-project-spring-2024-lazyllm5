@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <div id="welcome">Welcome!, {{ current_user.username }}</div>
+    <div id="welcome">Welcome!!! {{ current_user.username }}</div>
     <h1>Dashboard</h1>
     <a href="{{ url_for('detailed_spending_summary') }}">Current Spending Summary</a> |
     <a href="{{ url_for('spending_summary') }}">Total Spending Summary</a > |
@@ -40,9 +40,6 @@
         </li>
         {% endfor %}
     </ul>
-    <!-- Additional Test Delete Form -->
-    <form action="/delete-transaction/test" method="post" class="test-delete-form">
-        <button type="submit" class="test-delete-button">Test Delete</button>
-    </form>
+
 </body>
 </html>

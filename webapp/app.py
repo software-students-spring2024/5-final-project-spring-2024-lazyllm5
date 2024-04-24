@@ -8,13 +8,15 @@ from datetime import datetime, timedelta
 import os
 
 # Load environment variables
-load_dotenv()
+# load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_fallback_key')
-
 # MongoDB setup
-mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
+# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
+# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@localhost:27017/BudgetTracker?authSource=admin")
+# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin")
+mongo_uri = "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin"
 client = MongoClient(mongo_uri)
 db = client['BudgetTracker']
 users = db.users
@@ -69,10 +71,12 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        print(db, users, users.find_one({"username": username}))
         user_exists = users.find_one({"username": username})
         if user_exists:
             flash('Username already exists')
             return redirect(url_for('register'))
+        print("here")
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         users.insert_one({"username": username, "password": hashed_password})
         return redirect(url_for('login'))
@@ -129,15 +133,10 @@ def edit_transaction(transaction_id):
 @app.route('/delete-transaction/<transaction_id>', methods=['POST'])
 @login_required
 def delete_transaction(transaction_id):
-    print("Function triggered with transaction_id:", transaction_id)
     transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': current_user.id})
     flash('Transaction deleted successfully.')
-    print("Redirecting to home")
     return redirect(url_for('home'))
-@app.route('/delete-transaction/test', methods=['POST'])
-def test_delete():
-    print("Test delete triggered")
-    return "Test delete successful", 200
+    
 
 @app.route('/detailed-spending-summary')
 @login_required
@@ -221,5 +220,4 @@ def spending_summary():
                            yearly_spending=yearly_spending)
 
 if __name__ == '__main__':
-    FLASK_PORT = os.getenv("FLASK_PORT", "5000")
-    app.run(port=FLASK_PORT, host="0.0.0.0")
+    app.run(debug=True)
