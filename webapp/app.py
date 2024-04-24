@@ -14,8 +14,8 @@ app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_fallback_key')
 
 # MongoDB setup
-mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/mydatabase")
-client = MongoClient(mongo_uri, tls=True, tlsAllowInvalidCertificates=True)
+mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
+client = MongoClient(mongo_uri)
 db = client['BudgetTracker']
 users = db.users
 transactions = db.transactions
@@ -215,4 +215,5 @@ def spending_summary():
                            yearly_spending=yearly_spending)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    FLASK_PORT = os.getenv("FLASK_PORT", "5000")
+    app.run(port=FLASK_PORT, host="0.0.0.0")

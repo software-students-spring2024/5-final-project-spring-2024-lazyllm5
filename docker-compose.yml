@@ -3,9 +3,11 @@ services:
   webapp:
     image: wc2182/webapp:v4
     ports:
-      - "8000:5000"
+      - "5001:5000"
     depends_on:
       - mongodb
+    environment:
+      - MONGO_URI=mongodb://admin:123456@mongodb:27017/database
     networks:
       - webnet
 
