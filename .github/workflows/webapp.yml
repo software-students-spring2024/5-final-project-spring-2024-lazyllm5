@@ -52,20 +52,20 @@ jobs:
         push: true
         tags: wc2182/webapp:latest
 
-    deploy:
-      needs: build-and-push
-      runs-on: ubuntu-latest
-      steps:
-        - name: Deploy to Digital Ocean
-          uses: digitalocean/action-doctl@v2
-          with:
-            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-            script: |
-              EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^your-droplet-name$')
-              if [ -z "$EXISTS" ]; then
-                doctl compute droplet create your-droplet-name --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys <fingerprint> --user-data '#!/bin/bash
-                  docker pull wc2182/webapp:latest
-                  docker run -d --restart unless-stopped -p 80:80 wc2182/webapp:latest'
-              else
-                doctl compute ssh your-droplet-name --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest"
-              fi
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Digital Ocean
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          script: |
+            EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^your-droplet-name$')
+            if [ -z "$EXISTS" ]; then
+              doctl compute droplet create your-droplet-name --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys <fingerprint> --user-data '#!/bin/bash
+                docker pull wc2182/webapp:latest
+                docker run -d --restart unless-stopped -p 80:80 wc2182/webapp:latest'
+            else
+              doctl compute ssh your-droplet-name --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest"
+            fi
