@@ -33,7 +33,7 @@ jobs:
     - name: Run tests
       run: |
         cd webapp
-        timeout 10m pipenv run python pytest
+        timeout 5m pipenv run python pytest
   build-and-push:
     needs: build-and-test
     runs-on: ubuntu-latest
