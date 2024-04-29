@@ -1,3 +1,7 @@
+[![log github events](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/event-logger.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/event-logger.yml)
+[![webapp CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml)
+[![MongoDB CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml)
+
 # Final Project
 
 An exercise to put to practice software development teamwork, subsystem communication, containers, deployment, and CI/CD pipelines. See [instructions](./instructions.md) for details.
@@ -6,6 +10,14 @@ An exercise to put to practice software development teamwork, subsystem communic
 
 ## Introduction
 The Budget Tracker is a web-based application designed to help users manage their personal finances effectively. It allows users to track their income and expenses, categorize transactions, and view detailed spending summaries by day, week, month, or year. This tool aims to provide users with clear insights into their financial habits, aiding in better budget management and planning.
+
+## Docker
+### Pull from docker hub
+`docker pull wc2182/webapp:latest`
+`docker pull wc2182/mongodb:latest`
+### Use the docker-compose file to run
+`docker compose up --build`
+
 
 ## System Architecture
 This application is composed of two primary subsystems:
@@ -36,3 +48,8 @@ This application is composed of two primary subsystems:
 3. **Data Storage and Retrieval:** Transactions and user data are stored in MongoDB, which provides fast and reliable access to the data.
 4. **Reporting:** Aggregation queries are used to compile spending data into meaningful reports, which are rendered to the user through the Flask application.
 
+## Contributors
+1. [Angel Wu](https://github.com/angelWu2002)	
+2. [Weilin Cheng](https://github.com/M1stery232)
+3. [Ruichen Wang](https://github.com/rcwang937)	
+4. [Haoyang Li](https://github.com/LeoLi727)

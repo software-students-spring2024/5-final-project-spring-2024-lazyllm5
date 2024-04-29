@@ -16,9 +16,9 @@ app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_fallback_key')
 # mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
 # mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@localhost:27017/BudgetTracker?authSource=admin")
 # mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin")
-#mongo_uri = "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin"
-mongo_uri = os.getenv("MONGO_URI")
-client = MongoClient(mongo_uri, tls=True, tlsAllowInvalidCertificates=True)
+mongo_uri = "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin"
+# mongo_uri = os.getenv("MONGO_URI")
+client = MongoClient(mongo_uri)
 db = client['BudgetTracker']
 users = db.users
 transactions = db.transactions
