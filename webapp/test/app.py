@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient, DESCENDING
@@ -48,6 +48,7 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    session.pop('_flashes', None)
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     if request.method == 'POST':
@@ -64,18 +65,24 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    # Clear all flash messages
+    session.pop('_flashes', None)
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        print(db, users, users.find_one({"username": username}))
         user_exists = users.find_one({"username": username})
         if user_exists:
-            flash('Username already exists')
-            return redirect(url_for('register'))
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        users.insert_one({"username": username, "password": hashed_password})
-        return redirect(url_for('login'))
+            flash('Username already exists', 'error')
+            print("here")
+            #return redirect(url_for('register'))
+        else:
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            users.insert_one({"username": username, "password": hashed_password})
+            flash('Registration successful', 'success')
+            #return redirect(url_for('login'))
     return render_template('register.html')
 
 @app.route('/logout')
@@ -131,7 +138,10 @@ def edit_transaction(transaction_id):
 def delete_transaction(transaction_id):
     transactions.delete_one({'_id': ObjectId(transaction_id), 'user_id': current_user.id})
     flash('Transaction deleted successfully.')
-    return redirect(url_for('home'))
+    # Redirect back to the page the user came from
+    referrer = request.headers.get("Referer")
+    return redirect(referrer or url_for('home'))
+    
 
 @app.route('/detailed-spending-summary')
 @login_required
@@ -140,7 +150,7 @@ def detailed_spending_summary():
     month = request.args.get('month', type=int)  # Optional month selection
 
     # Define the start and end of the period based on user selection
-    if month:
+    if year and month:
         start_date = datetime(year, month, 1)
         end_date = datetime(year, month+1, 1) if month < 12 else datetime(year+1, 1, 1)
     else:
@@ -159,7 +169,13 @@ def detailed_spending_summary():
 
     total = sum(item['total'] for item in summary)  # Calculate the total spent in the selected period
 
-    return render_template('detailed_spending_summary.html', summary=summary, total=total, now=datetime.now())
+    user_transactions = transactions.find({
+        'user_id': current_user.id,
+        'date': {'$gte': start_date.strftime('%Y-%m-%d'), '$lt': end_date.strftime('%Y-%m-%d')}
+    })
+
+    return render_template('detailed_spending_summary.html', summary=summary, total=total, now=datetime.now(), transactions=list(user_transactions))
+
 
 
 @app.route('/spending-summary')
