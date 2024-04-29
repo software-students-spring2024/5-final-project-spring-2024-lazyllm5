@@ -2,10 +2,6 @@
 [![webapp CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml)
 [![MongoDB CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml)
 
-# Final Project
-
-An exercise to put to practice software development teamwork, subsystem communication, containers, deployment, and CI/CD pipelines. See [instructions](./instructions.md) for details.
-
 # Budget Tracker Application
 
 ## Introduction
@@ -19,6 +15,35 @@ The Budget Tracker is a web-based application designed to help users manage thei
 `docker pull wc2182/mongodb:latest`
 ### Use the docker-compose file to run
 `docker compose up --build`
+
+## Testing with pytest
+
+1. **Clone the Repository**
+  ```
+  git clone https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5
+  ```
+2. **Activate Pipenv**
+Navigate to the directory where you cloned the repository and activate Pipenv:
+  ```
+  cd test
+  pipenv shell
+  ```
+3. **Install Required Packages**
+Install all the required packages using Pipenv:
+  ```
+  pipenv install
+  ```
+4. **Run Tests**
+Execute the tests using pytest within the Pipenv environment:
+  ```
+pipenv run pytest
+  ```
+5. **Check Coverage**
+To see the test coverage, run pytest with the coverage option:
+  ```
+pipenv run pytest --cov
+  ```
+After running this command, check the coverage report listed for `webapp/test/app.py` to see the actual coverage for the webapp.
 
 
 ## System Architecture
@@ -51,7 +76,7 @@ This application is composed of two primary subsystems:
 4. **Reporting:** Aggregation queries are used to compile spending data into meaningful reports, which are rendered to the user through the Flask application.
 
 ## Contributors
-1. [Angel Wu](https://github.com/angelWu2002)	
+1. [Angel Wu](https://github.com/angelWu2002)
 2. [Weilin Cheng](https://github.com/M1stery232)
-3. [Ruichen Wang](https://github.com/rcwang937)	
+3. [Ruichen Wang](https://github.com/rcwang937)
 4. [Haoyang Li](https://github.com/LeoLi727)
