@@ -11,10 +11,14 @@ The Budget Tracker is a web-based application designed to help users manage thei
 ### Docker hub link
 `https://hub.docker.com/u/wc2182`
 ### Pull from docker hub
-`docker pull wc2182/webapp:latest`
-`docker pull wc2182/mongodb:latest`
+```
+docker pull wc2182/webapp:latest
+docker pull wc2182/mongodb:latest
+```
 ### Use the docker-compose file to run
-`docker compose up --build`
+```
+docker compose up --build
+```
 
 ## Testing with pytest
 
