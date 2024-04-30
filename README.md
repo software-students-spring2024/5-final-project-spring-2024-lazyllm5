@@ -2,10 +2,10 @@
 [![webapp CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml)
 [![MongoDB CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml)
 
-# Budget Tracker Application
+# Spending Tracker Application
 
 ## Introduction
-The Budget Tracker is a web-based application designed to help users manage their personal finances effectively. It allows users to track their income and expenses, categorize transactions, and view detailed spending summaries by day, week, month, or year. This tool aims to provide users with clear insights into their financial habits, aiding in better budget management and planning.
+The Spending Tracker is a web-based application designed to help users record their personal transactions. It allows users to track their expenses, categorize transactions, and view detailed spending summaries by day, week, month, and year. This tool aims to provide users with clear insights into their consumption habits, promoting future spending management and planning.
 
 ## Docker
 ### Docker hub link
