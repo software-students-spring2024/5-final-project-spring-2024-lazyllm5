@@ -61,14 +61,26 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
+            # Ensure docker-compose is installed
+            apt-get update && apt-get install -y docker-compose
+
             # Check if the specific droplet exists
             EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^ubuntu-s-1vcpu-1gb-nyc3-01$')
             if [ -z "$EXISTS" ]; then
-              # If the droplet does not exist, create and configure it
-              doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys <fingerprint> --user-data '#!/bin/bash
-                docker pull wc2182/webapp:latest
-                docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest'
-            else
-              # If the droplet exists, update the container
-              doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker rm webapp && docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest"
+              # Create droplet if it does not exist
+              doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys 84:7c:f1:37:b4:a7:c8:93:00:a4:91:d4:f3:e8:9a:2a
             fi
+
+            # Clone or pull the repository on the droplet
+            SSH_COMMAND="if [ ! -d 'webapp' ]; then
+                            git clone https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5.git webapp;
+                        else
+                            cd webapp && git pull origin main;
+                        fi;
+                        cd webapp && docker-compose pull && docker-compose up --build -d"
+
+            # Execute the commands on the droplet
+            doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "$SSH_COMMAND"
+
+
+
