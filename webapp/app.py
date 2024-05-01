@@ -13,11 +13,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_fallback_key')
 # MongoDB setup
-# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
-# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@localhost:27017/BudgetTracker?authSource=admin")
-# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin")
-mongo_uri = "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin"
-# mongo_uri = os.getenv("MONGO_URI")
+mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
+mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@localhost:27017/BudgetTracker?authSource=admin")
+mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin")
+#mongo_uri = "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin"
+mongo_uri = os.getenv("MONGO_URI")
 client = MongoClient(mongo_uri)
 db = client['BudgetTracker']
 users = db.users
