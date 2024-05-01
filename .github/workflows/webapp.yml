@@ -1,0 +1,86 @@
+name: webapp CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+env:
+  MONGO_URI: "mongodb+srv://Weilin:Wl1234567890@cluster0.od4ogpa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install pipenv
+        pipenv install --dev
+        cd webapp
+        pipenv install --dev
+    - name: Run tests
+      run: |
+        cd webapp
+        timeout 5m pipenv run python -m pytest
+  build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./webapp
+        file: ./webapp/Dockerfile
+        push: true
+        tags: wc2182/webapp:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Digital Ocean
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          script: |
+            # Ensure docker-compose is installed
+            apt-get update && apt-get install -y docker-compose
+
+            # Check if the specific droplet exists
+            EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^ubuntu-s-1vcpu-1gb-nyc3-01$')
+            if [ -z "$EXISTS" ]; then
+              # Create droplet if it does not exist
+              doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys 84:7c:f1:37:b4:a7:c8:93:00:a4:91:d4:f3:e8:9a:2a
+            fi
+
+            # Clone or pull the repository on the droplet
+            SSH_COMMAND = """
+                git clone https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5;
+                cd 5-final-project-spring-2024-lazyllm5/webapp;
+                docker pull wc2182/webapp:latest;
+                docker-compose up --build -d;
+            """
+
+            # Execute the commands on the droplet
+            doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "$SSH_COMMAND"
+
+
+
