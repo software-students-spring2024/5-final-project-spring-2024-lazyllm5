@@ -56,16 +56,22 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Digital Ocean
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          script: |
-            EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^ubuntu-s-1vcpu-1gb-nyc3-01$')
-            if [ -z "$EXISTS" ]; then
-              doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys <fingerprint> --user-data '#!/bin/bash
-                docker pull wc2182/webapp:latest
-                docker run -d --restart unless-stopped -p 80:80 wc2182/webapp:latest'
-            else
-              doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest"
-            fi
+    - name: Deploy to Digital Ocean
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      script: |
+        EXISTING_DROPLET=$(doctl compute droplet list --format Name --no-header | grep 'ubuntu-s-1vcpu-1gb-nyc3-01$')
+        if [ -z "$EXISTING_DROPLET" ]; then
+          doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys 84:7c:f1:37:b4:a7:c8:93:00:a4:91:d4:f3:e8:9a:2a --user-data '#!/bin/bash' --wait
+          DROPLET_IP=$(doctl compute droplet list --format IP,Name --no-header | grep 'ubuntu-s-1vcpu-1gb-nyc3-01' | cut -f1)
+          echo "New Droplet IP: $DROPLET_IP"
+          docker pull wc2182/webapp:latest
+          docker pull wc2182/mongodb:latest
+          docker compose up --build
+        else
+          DROPLET_IP=$(doctl compute droplet list --format IP,Name --no-header | grep 'ubuntu-s-1vcpu-1gb-nyc3-01' | cut -f1)
+          echo "Existing Droplet IP: $DROPLET_IP"
+          doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker run -d --restart unless-stopped --name webapp wc2182/webapp:latest"
+        fi
+
