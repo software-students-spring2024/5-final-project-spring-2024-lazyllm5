@@ -61,11 +61,14 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           script: |
+            # Check if the specific droplet exists
             EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^ubuntu-s-1vcpu-1gb-nyc3-01$')
             if [ -z "$EXISTS" ]; then
+              # If the droplet does not exist, create and configure it
               doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys <fingerprint> --user-data '#!/bin/bash
                 docker pull wc2182/webapp:latest
-                docker run -d --restart unless-stopped -p 80:80 wc2182/webapp:latest'
+                docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest'
             else
-              doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest"
+              # If the droplet exists, update the container
+              doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "docker pull wc2182/webapp:latest && docker stop webapp && docker rm webapp && docker run -d --restart unless-stopped --name webapp -p 80:80 wc2182/webapp:latest"
             fi
