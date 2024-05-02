@@ -6,7 +6,7 @@ from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import os
-
+#test
 # Load environment variables
 load_dotenv()
 
@@ -144,7 +144,7 @@ def delete_transaction(transaction_id):
     # Redirect back to the page the user came from
     referrer = request.headers.get("Referer")
     return redirect(referrer or url_for('home'))
-    
+
 
 @app.route('/detailed-spending-summary')
 @login_required
