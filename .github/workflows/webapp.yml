@@ -60,7 +60,7 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN1 }}
-        run: |
+        script: |
             # Ensure docker-compose is installed
             apt-get update && apt-get install -y docker-compose
 
