@@ -10,7 +10,7 @@ The Spending Tracker is a web-based application designed to help users record th
 [Visit Our Web App](http://138.197.33.44:4000/)
 
 
-## Run Locally on Docker
+## Run Locally on Docker For M chip
 ### Docker hub link
 `https://hub.docker.com/r/hnkyntm/ruichen`
 
@@ -21,7 +21,26 @@ docker pull hnkyntm/ruichen
 ```
 ### Use this command to run locally using docker image
 ```
-docker run -b -p 4000:3000 hnkyntm/ruichen
+docker run -p 4000:3000 hnkyntm/ruichen
+```
+## Run Locally on Docker For intel chip
+### Docker hub link
+`https://hub.docker.com/u/wc2182`
+
+### Pull from docker hub
+```
+docker pull wc2182/webapp:latest
+docker pull wc2182/mongodb:latest
+
+```
+### Use this command to run locally using docker image
+```
+docker run -p 4000:3000 wc2182/webapp:latest
+docker run -p 4000:3000 wc2182/mongodb:latest
+```
+### or
+```
+docker compose up
 ```
 
 ## Testing with pytest
