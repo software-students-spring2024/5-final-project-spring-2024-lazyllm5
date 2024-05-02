@@ -1,23 +1,27 @@
 [![log github events](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/event-logger.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/event-logger.yml)
 [![webapp CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/webapp.yml)
-[![MongoDB CI/CD](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5/actions/workflows/mongodb.yml)
 
 # Spending Tracker Application
 
 ## Introduction
 The Spending Tracker is a web-based application designed to help users record their personal transactions. It allows users to track their expenses, categorize transactions, and view detailed spending summaries by day, week, month, and year. This tool aims to provide users with clear insights into their consumption habits, promoting future spending management and planning.
 
-## Docker
+## Run our deployed version
+[Visit Our Web App](http://138.197.33.44:4000/)
+
+
+## Run Locally on Docker
 ### Docker hub link
-`https://hub.docker.com/u/wc2182`
+`https://hub.docker.com/r/hnkyntm/ruichen`
+
 ### Pull from docker hub
 ```
-docker pull wc2182/webapp:latest
-docker pull wc2182/mongodb:latest
+docker pull hnkyntm/ruichen
+
 ```
-### Use the docker-compose file to run
+### Use this command to run locally using docker image
 ```
-docker compose up --build
+docker run -b -p 4000:3000 hnkyntm/ruichen
 ```
 
 ## Testing with pytest
@@ -77,10 +81,11 @@ This application is composed of two primary subsystems:
 1. **User Interaction:** Through the web interface, users interact with forms and views to enter and manage data.
 2. **Data Processing:** The Flask backend processes this data, handling business logic and interacting with the MongoDB database.
 3. **Data Storage and Retrieval:** Transactions and user data are stored in MongoDB, which provides fast and reliable access to the data.
-4. **Reporting:** Aggregation queries are used to compile spending data into meaningful reports, which are rendered to the user through the Flask application.
+4. **Reporting:** Aggregation queries are used to compile spending data into meaningful reports, which are then rendered to the user through the Flask application.
 
 ## Contributors
-1. [Angel Wu](https://github.com/angelWu2002)
-2. [Weilin Cheng](https://github.com/M1stery232)
-3. [Ruichen Wang](https://github.com/rcwang937)
+
+1. [Ruichen Wang](https://github.com/rcwang937)
+2. [Angel Wu](https://github.com/angelWu2002)
+3. [Weilin Cheng](https://github.com/M1stery232)
 4. [Haoyang Li](https://github.com/LeoLi727)

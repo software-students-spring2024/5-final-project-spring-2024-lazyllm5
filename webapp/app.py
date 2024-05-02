@@ -6,19 +6,17 @@ from bson.objectid import ObjectId
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 import os
+import certifi
 
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='./templates')
 app.secret_key = os.getenv('SECRET_KEY', 'a_very_secret_fallback_key')
+
 # MongoDB setup
-# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/database")
-# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@localhost:27017/BudgetTracker?authSource=admin")
-# mongo_uri = os.getenv("MONGO_URI", "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin")
-mongo_uri = "mongodb://admin:123456@mongodb:27017/BudgetTracker?authSource=admin"
-# mongo_uri = os.getenv("MONGO_URI")
-client = MongoClient(mongo_uri)
+mongo_uri = os.getenv("MONGO_URI")
+client = MongoClient(mongo_uri, tlsCAFile=certifi.where())
 db = client['BudgetTracker']
 users = db.users
 transactions = db.transactions
@@ -234,4 +232,5 @@ def spending_summary():
                            yearly_spending=yearly_spending)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app_port = 3000
+    app.run(debug=True, host='0.0.0.0', port=app_port)

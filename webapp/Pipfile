@@ -12,6 +12,7 @@ pymongo = "*"
 mongomock = "*"
 pytest-cov = "*"
 pytest-mock = "*"
+certifi = "*"
 
 [dev-packages]
 pytest = "*"
