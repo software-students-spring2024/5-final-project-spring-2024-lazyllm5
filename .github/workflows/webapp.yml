@@ -52,35 +52,28 @@ jobs:
         push: true
         tags: wc2182/webapp:latest
 
-  deploy:
+    deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Digital Ocean
+      - name: Setup doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          script: |
-            # Ensure docker-compose is installed
-            apt-get update && apt-get install -y docker-compose
 
-            # Check if the specific droplet exists
-            EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^ubuntu-s-1vcpu-1gb-nyc3-01$')
-            if [ -z "$EXISTS" ]; then
-              # Create droplet if it does not exist
-              doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys 84:7c:f1:37:b4:a7:c8:93:00:a4:91:d4:f3:e8:9a:2a
-            fi
+      - name: Deploy to Digital Ocean
+        run: |
+          # Install docker-compose if not installed
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
 
-            # Clone or pull the repository on the droplet
-            SSH_COMMAND = """
-                cd 5-final-project-spring-2024-lazyllm5;
-                docker pull wc2182/mongodb:latest;
-                docker pull wc2182/webapp:latest;
-                docker-compose up --build -d;
-            """
+          # Check if the specific droplet exists
+          EXISTS=$(doctl compute droplet list --format Name --no-header | grep '^ubuntu-s-1vcpu-1gb-nyc3-01$')
+          if [ -z "$EXISTS" ]; then
+            # Create droplet if it does not exist
+            doctl compute droplet create ubuntu-s-1vcpu-1gb-nyc3-01 --size s-1vcpu-1gb --image docker-18-04 --region nyc3 --ssh-keys ${{ secrets.SSH_KEY_ID }}
+          fi
 
-            # Execute the commands on the droplet
-            doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "$SSH_COMMAND"
-
-
-
+          # Define and execute SSH command
+          SSH_COMMAND="cd 5-final-project-spring-2024-lazyllm5; docker pull wc2182/mongodb:latest; docker pull wc2182/webapp:latest; docker-compose up --build -d"
+          doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "$SSH_COMMAND"
