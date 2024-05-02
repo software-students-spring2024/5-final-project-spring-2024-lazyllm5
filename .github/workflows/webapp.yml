@@ -61,13 +61,6 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Setup SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H '165.227.188.197' >> ~/.ssh/known_hosts
-          ssh-keygen -R '165.227.188.197'  # If needed to clear previous entries
 
       - name: Deploy to Digital Ocean
         run: |
