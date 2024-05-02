@@ -75,6 +75,7 @@ jobs:
             SSH_COMMAND = """
                 git clone https://github.com/software-students-spring2024/5-final-project-spring-2024-lazyllm5;
                 cd 5-final-project-spring-2024-lazyllm5/webapp;
+                docker pull wc2182/mongodb:lastest;
                 docker pull wc2182/webapp:latest;
                 docker-compose up --build -d;
             """

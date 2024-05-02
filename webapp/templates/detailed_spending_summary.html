@@ -3,59 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Transactions Summary</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f9;
-            margin: 0;
-            padding: 10px;
+            padding: 20px;
         }
-        #header {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            text-align: right; 
-        }
-        #welcome, #logout-link {
-            font-size: 16px;
-            display: block; 
-        }
-        #logout-link a {
-            color: red;
-            text-decoration: underline; 
-            font-weight: normal; 
-        }
-        #logout-link a:hover {
-            text-decoration: none; 
-        }
-        h1 {
-            text-align: center;
+        h1, h2 {
             color: #333;
-            font-size: 36px;
-        }
-        h2 {
-            text-align: left;
-            color: #555;
-            margin-top: 30px;
-            margin-bottom: 20px;
-            font-size: 20px; 
-        }
-        nav {
             text-align: center;
-            margin-top: 20px;
+        }
+        form {
+            display: flex;
+            justify-content: center;
             margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        nav a {
-            color: #5c67f2;
-            text-decoration: none;
+        .inline-form {
+            display: inline;
+        }
+        input, button {
             margin: 0 10px;
-            font-size: 20px;
+            padding: 2px;
+            border: 0.5px solid #ccc;
+            border-radius: 4px;
         }
-        nav a:hover {
-            text-decoration: underline;
+        button {
+            background-color: #4CAF50; 
+            color: white;
+            cursor: pointer;
         }
-        ul {
+        button:hover {
+            background-color: #45a049;
+        }
+        ul, ol {
             list-style-type: none;
             padding: 0;
             width: 80%;
@@ -81,16 +65,34 @@
             border: none;
             color: red;
             cursor: pointer;
-            text-decoration: underline;
             padding: 0;
+            text-decoration: underline
         }
         button.delete-button:hover {
             text-decoration: underline;
         }
-        form {
-            display: inline;
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #2A2A2A;
+            text-decoration: none;
         }
-
+        nav {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: #5c67f2;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        
         .transaction-item {
             display: flex;
             justify-content: space-between;
@@ -105,34 +107,43 @@
         
         button.edit-button {
             background: none; 
-            color: #007BFF;
+            color: #007BFF; 
             padding: 5px 10px;
-            border: 1px solid #ffffff;
+            border: 1px solid #ffffff; 
             border-radius: 4px;
             text-decoration: underline;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease; 
         }
 
         button.edit-button:hover {
             background-color: #e7f4ff; 
-            text-decoration: underline;
+            text-decoration: underline; 
         }
     </style>
 </head>
 <body>
-    <div id="header">
-        <div id="welcome">Welcome, {{ current_user.username }}</div>
-        <div id="logout-link"><a href="{{ url_for('logout') }}">Logout</a></div>
-    </div>
-    <h1>Dashboard</h1>
-    <nav>
-        <a href="{{ url_for('detailed_spending_summary') }}">Transactions Summary</a> |
-        <a href="{{ url_for('spending_summary') }}">Total Spending Summary</a> |
-        <a href="{{ url_for('add_transaction') }}">Add Transaction</a>
-    </nav>
-    <h2>Recent Transactions:</h2>
+    <h1>Transactions Summary</h1>
+
+    <!-- Selection form for year and month -->
+    <form action="{{ url_for('detailed_spending_summary') }}" method="get">
+        Year: <input type="number" name="year" value="{{ now.year }}" min="2000" max="{{ now.year }}">
+        Month: <input type="number" name="month" min="1" max="12" placeholder="Month (optional)">
+        <button type="submit">Show</button>
+    </form>
+
+    {% if year is not none %}
+    <h2>Selected Period Spending</h2>
     <ul>
+        {% for item in summary %}
+        <li>{{ item._id }}: ${{ item.total | round(2) }} ({{ (item.total / total * 100) | round(2) }}%)</li>
+        {% endfor %}
+        <li><strong>Total:</strong> ${{ total | round(2) }}</li>
+    </ul>
+    <h2>Selected Period Transactions</h2>
+    <ul>
+        {{ transactions|length }} transactions found.
+        {% if transactions %}
         {% for transaction in transactions %}
         <li>
             <div class="transaction-item">
@@ -148,6 +159,14 @@
             </div>
         </li>
         {% endfor %}
+        {% else %}
+        <li>No transactions found for the selected period.</li>
+        {% endif %}
     </ul>
+    {% else %}
+    <h2>Please select a month and year to view the spending summary and transactions.</h2>
+    {% endif %}
+    
+    <a href="{{ url_for('home') }}">Back to Dashboard</a>
 </body>
 </html>

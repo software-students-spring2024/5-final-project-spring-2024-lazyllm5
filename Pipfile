@@ -5,17 +5,18 @@ name = "pypi"
 
 [packages]
 flask = "*"
-python-dotenv = "*"
 flask-login = "*"
 flask-bcrypt = "*"
 pymongo = "*"
-mongomock = "*"
+pip = "*"
+python-dotenv = "*"
+pytest = "*"
+pytest-flask = "*"
 pytest-cov = "*"
+coverage = "*"
 pytest-mock = "*"
 
 [dev-packages]
-pytest = "*"
-pytest-mock = "*"
 
 [requires]
 python_version = "3.10"

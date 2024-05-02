@@ -6,6 +6,3 @@ addopts = "-ra -q" # default pytest command line options
 pythonpath = [
   "."
 ]
-testpaths = [
-    "tests",
-]
