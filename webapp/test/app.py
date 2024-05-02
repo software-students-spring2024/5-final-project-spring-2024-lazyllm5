@@ -142,7 +142,6 @@ def delete_transaction(transaction_id):
     referrer = request.headers.get("Referer")
     return redirect(referrer or url_for('home'))
 
-
 @app.route('/detailed-spending-summary')
 @login_required
 def detailed_spending_summary():

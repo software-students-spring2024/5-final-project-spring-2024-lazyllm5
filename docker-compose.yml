@@ -3,7 +3,7 @@ services:
   webapp:
     image: wc2182/webapp:latest
     ports:
-      - "8001:5000"
+      - "5001:5000"
     depends_on:
       - mongodb
     environment:

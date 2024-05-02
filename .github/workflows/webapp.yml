@@ -82,5 +82,3 @@ jobs:
             # Execute the commands on the droplet
             doctl compute ssh ubuntu-s-1vcpu-1gb-nyc3-01 --ssh-command "$SSH_COMMAND"
 
-
-
