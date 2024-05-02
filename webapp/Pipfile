@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+flask = "*"
+flask-login = "*"
+flask-bcrypt = "*"
+pymongo = "*"
+pip = "*"
+python-dotenv = "*"
+pytest = "*"
+pytest-flask = "*"
+pytest-cov = "*"
+coverage = "*"
+pytest-mock = "*"
+certifi = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
