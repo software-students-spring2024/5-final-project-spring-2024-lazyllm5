@@ -66,8 +66,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 'your.droplet.ip' >> ~/.ssh/known_hosts
-          ssh-keygen -R 'your.droplet.ip'  # If needed to clear previous entries
+          ssh-keyscan -H '165.227.188.197' >> ~/.ssh/known_hosts
+          ssh-keygen -R '165.227.188.197'  # If needed to clear previous entries
 
       - name: Deploy to Digital Ocean
         run: |
