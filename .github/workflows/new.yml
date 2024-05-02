@@ -75,4 +75,4 @@ jobs:
 
     - name: Deploy to DigitalOcean Droplet
       run: |
-        ssh -o StrictHostKeyChecking=no root@165.227.188.197 "cd 5-final-project-spring-2024-lazyllm5 && docker-compose down && docker pull wc2182/mongodb:latest && docker pull wc2182/webapp:latest && docker-compose up --build -d"
+        ssh -v -o StrictHostKeyChecking=no root@165.227.188.197 "cd 5-final-project-spring-2024-lazyllm5 && docker-compose down && docker pull wc2182/mongodb:latest && docker pull wc2182/webapp:latest && docker-compose up --build -d"
