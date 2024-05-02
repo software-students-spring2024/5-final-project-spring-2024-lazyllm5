@@ -81,7 +81,7 @@ This application is composed of two primary subsystems:
 1. **User Interaction:** Through the web interface, users interact with forms and views to enter and manage data.
 2. **Data Processing:** The Flask backend processes this data, handling business logic and interacting with the MongoDB database.
 3. **Data Storage and Retrieval:** Transactions and user data are stored in MongoDB, which provides fast and reliable access to the data.
-4. **Reporting:** Aggregation queries are used to compile spending data into meaningful reports, which are rendered to the user through the Flask application.
+4. **Reporting:** Aggregation queries are used to compile spending data into meaningful reports, which are then rendered to the user through the Flask application.
 
 ## Contributors
 
