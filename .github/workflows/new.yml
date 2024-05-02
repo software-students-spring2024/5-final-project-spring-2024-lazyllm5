@@ -1,0 +1,36 @@
+name: NEW CI/CD Deployment
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+env:
+  MONGO_URI: "mongodb+srv://Weilin:Wl1234567890@cluster0.od4ogpa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install SSH client
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ssh-client
+
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 165.227.188.197 >> ~/.ssh/known_hosts
+
+    - name: Deploy to DigitalOcean Droplet
+      run: |
+        ssh -o StrictHostKeyChecking=no root@165.227.188.197 "cd 5-final-project-spring-2024-lazyllm5 && docker-compose down && docker pull wc2182/mongodb:latest && docker pull wc2182/webapp:latest && docker-compose up --build -d"
