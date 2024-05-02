@@ -1,4 +1,4 @@
-name: NEW CI/CD Deployment
+name: webapp CI/CD Deployment
 
 on:
   pull_request:
@@ -8,13 +8,55 @@ on:
 
 env:
   MONGO_URI: "mongodb+srv://Weilin:Wl1234567890@cluster0.od4ogpa.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
 jobs:
-  deploy:
+  build-and-test:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install pipenv
+        pipenv install --dev
+        cd webapp
+        pipenv install --dev
+    - name: Run tests
+      run: |
+        cd webapp
+        timeout 5m pipenv run python -m pytest
+
+  build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: ./webapp
+        file: ./webapp/Dockerfile
+        push: true
+        tags: wc2182/webapp:latest
+
+  deploy:
     needs: build-and-push
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -27,7 +69,7 @@ jobs:
     - name: Set up SSH key
       run: |
         mkdir -p ~/.ssh
-        echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H 165.227.188.197 >> ~/.ssh/known_hosts
 
