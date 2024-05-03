@@ -16,11 +16,11 @@ The Spending Tracker is a web-based application designed to help users record th
 
 ### Pull from docker hub
 ```
-docker pull rcwangg/ruichen:latest
+docker pull rcwangg/ruichen:lastest
 ```
 ### Use this command to run locally using docker image
 ```
-docker run -p 4000:3000 rcwangg/ruichen:latest
+docker run -p 4000:3000 rcwangg/ruichen:lastest
 ```
 
 ### Use this IP address: `http://localhost:4000/`
