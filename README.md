@@ -16,12 +16,12 @@ The Spending Tracker is a web-based application designed to help users record th
 
 ### Pull from docker hub
 ```
-docker pull hnkyntm/ruichen
+docker pull rcwangg/ruichen:latest
 
 ```
 ### Use this command to run locally using docker image
 ```
-docker run -p 4000:3000 hnkyntm/ruichen
+docker run -p 4000:3000 rcwangg/ruichen:latest
 ```
 ## Run Locally on Docker For intel chip
 ### Docker hub link
